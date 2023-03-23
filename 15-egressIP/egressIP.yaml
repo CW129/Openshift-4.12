@@ -1,0 +1,12 @@
+apiVersion: k8s.ovn.org/v1
+kind: EgressIP
+metadata:
+  name: sample-egress
+spec:
+  egressIPs: 
+  - 10.131.2.100
+  namespaceSelector: 
+    matchLabels:
+      kubernetes.io/metadata.name: webhook-sample
+#      project: webhook-sample
+

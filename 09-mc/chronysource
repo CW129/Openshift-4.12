@@ -1,0 +1,6 @@
+    pool 172.20.1.21 iburst
+    driftfile /var/lib/chrony/drift
+    makestep 1.0 3
+    rtcsync
+    logdir /var/log/chrony
+

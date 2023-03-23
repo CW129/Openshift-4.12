@@ -1,0 +1,11 @@
+oc patch operatorhub cluster -p '{"spec": {"disableAllDefaultSources": true}}' --type=merge
+
+# Download to registry
+oc mirror --config ./imageset-config.yaml docker://registry.ocp4.example.io:5000/mirror/oc-mirror-metadata
+
+# Download to filesystem
+oc mirror --config ./imageset-config.yaml docker://registry.ocp4.example.io:5000/mirror/oc-mirror-metadata
+
+# Mirror from filesystem to registry
+oc mirror --from mirror_seq1_000000.tar docker://registry.ocp4.example.io:5000/mirror10/oc-mirror
+

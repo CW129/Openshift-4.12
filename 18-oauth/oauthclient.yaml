@@ -1,0 +1,9 @@
+apiVersion: oauth.openshift.io/v1
+grantMethod: auto
+kind: OAuthClient
+metadata:
+  name: gitlabidp
+redirectURIs:
+- https://oauth-openshift.apps.ocp4.example.io/oauth2callback/gitlabidp
+secret: 8c170230f5b59017db1a6ad20ba10128
+

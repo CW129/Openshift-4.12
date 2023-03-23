@@ -1,0 +1,23 @@
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: gitlabidp 
+    mappingMethod: claim 
+    type: GitLab
+    gitlab:
+      clientID: 72ad91fb3396e8eb5c607d6abda7fedb751fc7d892bd3362f7d1cf9463079505
+      clientSecret: 
+        name: gitlab-secret
+      url: https://gitlab.ocp4.example.io:4443
+      ca:
+        name: ca-config-map
+  - name: PoC
+    mappingMethod: claim
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: htpass-secret
+

@@ -1,0 +1,44 @@
+NAME                                              DISPLAY NAME                                      DEFAULT CHANNEL
+abot-operator-rhmp                                ABot                                              alpha
+aerospike-kubernetes-operator-rhmp                Aerospike Kubernetes Operator                     alpha
+aikit-operator-rhmp                               Intel® oneAPI AI Analytics Toolkit Operator       alpha
+anzo-operator-rhmp                                Anzo Operator                                     stable
+anzograph-operator-rhmp                           AnzoGraph Operator                                stable
+anzounstructured-operator-rhmp                    Anzo Unstructured Operator                        stable
+citrix-cpx-with-ingress-controller-operator-rhmp  Citrix ADC CPX with Ingress Controller            alpha
+citrix-ingress-controller-operator-rhmp           Citrix Ingress Controller                         alpha
+cloudbees-ci-rhmp                                 CloudBees CI                                      alpha
+cockroachdb-certified-rhmp                        CockroachDB Operator                              stable
+couchbase-enterprise-certified-rhmp               Couchbase Operator                                stable
+crunchy-postgres-operator-rhmp                    Crunchy Postgres for Kubernetes                   v5
+datadog-operator-certified-rhmp                   Datadog Operator                                  alpha
+dynatrace-operator-rhmp                           Dynatrace Operator                                alpha
+entando-k8s-operator-rhmp                         Entando Operator                                  stable
+falcon-operator-rhmp                              CrowdStrike Falcon Platform - Operator            alpha
+instana-agent-operator-rhmp                       Instana Agent Operator                            stable
+iomesh-operator-rhmp                              IOMesh Operator                                   stable
+joget-dx-operator-rhmp                            Joget DX Operator                                 alpha
+k10-kasten-operator-paygo-rhmp                    Kasten K10 (Enterprise - PAYGO)                   stable
+k10-kasten-operator-rhmp                          Kasten K10 (Free)                                 stable
+k10-kasten-operator-term-rhmp                     Kasten K10 (Enterprise - Term)                    stable
+k8s-triliovault-rhmp                              TrilioVault for Kubernetes                        stable
+kubemq-operator-marketplace-rhmp                  Kubemq Enterprise Operator                        alpha
+kubeturbo-certified-rhmp                          Kubeturbo Operator                                stable
+linstor-operator-rhmp                             Linstor Operator                                  stable
+marketplace-games-operator-rhmp                   Arcade Operator                                   alpha
+minio-operator-rhmp                               Minio Operator Rhmp                               stable
+model-builder-for-vision-certified-rhmp           IBM Model Builder for Vision                      stable
+neuvector-certified-operator-rhmp                 NeuVector Operator                                beta
+ovms-operator-rhmp                                OpenVINO Toolkit Operator                         alpha
+pachyderm-operator-rhmp                           Pachyderm                                         stable
+redis-enterprise-operator-cert-rhmp               Redis Enterprise Operator                         production
+seldon-deploy-operator-rhmp                       Seldon Deploy Operator                            stable
+starburst-enterprise-helm-operator-paygo-rhmp     Starburst Enterprise Pay as you go Helm Operator  alpha
+starburst-enterprise-helm-operator-rhmp           Starburst Enterprise Helm Operator                alpha
+sysdig-certified-rhmp                             Sysdig Agent Operator                             stable
+t8c-certified-rhmp                                Turbonomic Platform Operator                      stable
+timemachine-operator-rhmp                         Time Machine Operator                             alpha
+vfunction-server-operator-rhmp                    vFunction Operator                                stable
+xcrypt-operator-rhmp                              Zettaset XCrypt Operator                          alpha
+yugabyte-platform-operator-bundle-rhmp            Yugabyte Platform Operator                        alpha
+zabbix-operator-certified-rhmp                    Zabbix Operator                                   lts

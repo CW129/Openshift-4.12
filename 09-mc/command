@@ -1,0 +1,8 @@
+for i in $(oc get no --no-headers  | awk '{print $1}'); do ssh core@${i} \
+-- sudo cat /etc/resolv.conf ; done
+
+for i in $(oc get no --no-headers  | awk '{print $1}'); do ssh core@${i} \
+-- sudo chronyc sources; done
+
+for i in $(oc get no --no-headers  | awk '{print $1}'); do ssh core@${i} \
+-- sudo timedatectl ; done

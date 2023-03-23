@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0011
+spec:
+  capacity:
+    storage: 50Gi 
+  accessModes:
+  - ReadWriteOnce
+  nfs: 
+    path: /PV/pv0011
+    server: 10.131.2.10
+  persistentVolumeReclaimPolicy: Retain 
+

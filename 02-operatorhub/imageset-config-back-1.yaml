@@ -1,0 +1,28 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+storageConfig:
+  registry:
+    imageURL: registry.ocp4.example.io:5000/mirror5/oc-mirror-metadata
+    skipTLS: false
+mirror:
+  platform:
+    channels:
+    - name: stable-4.12
+      type: ocp
+  operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.12
+    packages:
+    - name: openshift-gitops-operator
+      channels: 
+      - name: latest
+  - catalog: registry.redhat.io/redhat/community-operator-index:v4.12
+    packages:
+    - name: gitlab-operator-kubernetes
+      channels:
+      - name: stable
+    - name: gitlab-runner-operator
+      channels: 
+      - name: stable
+  additionalImages:
+  - name: registry.redhat.io/ubi8/ubi:latest
+  helm: {}

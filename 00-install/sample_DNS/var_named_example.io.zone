@@ -1,0 +1,49 @@
+$TTL 1W
+@       IN      SOA     ns1.example.io.  root (
+                        2022052400      ; serial
+                        3H              ; refresh (3 hours)
+                        30M             ; retry (30 minutes)
+                        2W              ; expiry (2 weeks)
+                        1W )            ; minimum (1 week)
+        IN      NS      ns1.example.io.
+        IN      MX 10   smtp.example.io.
+;
+;
+ns1     IN      A       10.131.2.10
+smtp    IN      A       10.131.2.10
+;
+helper  IN      A       10.131.2.10
+helper.ocp4    IN      A       10.131.2.10
+;
+; The api identifies the IP of your load balancer.
+bastion.ocp4           IN      A       10.131.2.10
+registry.ocp4          IN      A       10.131.2.10
+api.ocp4               IN      A       10.131.2.10
+api-int.ocp4           IN      A       10.131.2.10
+;
+; The wildcard also identifies the load balancer.
+*.apps.ocp4            IN      A       10.131.2.10
+;
+; Create an entry for the bootstrap host.
+bootstrap.ocp4         IN      A       10.131.2.11
+;
+; Create entries for the master hosts.
+master1.ocp4           IN      A       10.131.2.20
+master2.ocp4           IN      A       10.131.2.21
+master3.ocp4           IN      A       10.131.2.22
+;
+; Create entries for the worker hosts.
+worker1.ocp4           IN      A       10.131.2.30
+worker2.ocp4           IN      A       10.131.2.31
+worker3.ocp4           IN      A       10.131.2.32
+; Create entries for the infra hosts.
+infra1.ocp4           IN      A       10.131.2.40
+infra2.ocp4           IN      A       10.131.2.41
+; Create entries for the route hosts.
+router1.ocp4           IN      A       10.131.2.50
+router2.ocp4           IN      A       10.131.2.51
+;
+gitlab.ocp4           IN      A       10.131.2.10
+nexus.ocp4            IN      A       10.131.2.10
+;EOF
+

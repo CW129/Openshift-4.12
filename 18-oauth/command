@@ -1,0 +1,17 @@
+cert_c=KR
+cert_s="" # Certificate State (S)
+cert_l="" # Certificate Locality (L)
+cert_o="timegate" # Certificate Organization (O)
+cert_ou="coretech" # Certificate Organizational Unit (OU)
+cert_cn="gitlab.ocp4.example.com" # Certificate Common Name (CN)
+
+
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout ./gitlab.example.io.key -x509 -days 365 -out ./gitlab.example.io.crt -addext 'subjectAltName=DNS:*.ocp4.example.io, DNS:gitlab.example.io' -subj /C=KR/ST=/L=/O=timegate/OU=coretech/CN=gitlab.example.io
+
+
+Application ID : 72ad91fb3396e8eb5c607d6abda7fedb751fc7d892bd3362f7d1cf9463079505
+Secret : 9b9d286af3ab8b2578e2683c5d962af571ce38c097fff076bb451c7c21580bfd
+Callback URL : https://oauth-openshift.apps.ocp4.example.io/oauth2callback/gitlabidp
+
+
+
