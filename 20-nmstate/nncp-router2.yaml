@@ -1,0 +1,25 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: ens224-router2-policy
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: router2.ocp4.example.io
+  desiredState:
+    interfaces:
+    - name: ens224
+      description: static IP on ens224
+      type: ethernet
+      state: up
+      ipv4:
+        dhcp: false
+        address:
+        - ip: 10.131.1.51
+          prefix-length: 24
+        enabled: true
+    routes:
+      config:
+      - destination: 0.0.0.0/0
+        next-hop-address: 10.131.1.254
+        next-hop-interface: ens224
+        metric: 47
