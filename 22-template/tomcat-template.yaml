@@ -1,0 +1,271 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  jws31: "1.4"
+  template: timegate-tomcat8-session-clutering-with-scouter
+message: A new JWS application for Apache Tomcat 8 has been created in your project.
+  The username/password for administering your JWS is ${JWS_ADMIN_USERNAME}/${JWS_ADMIN_PASSWORD}.
+metadata:
+  annotations:
+    description: Customized Tomcat Template for Timegate
+    iconClass: icon-rh-tomcat
+    openshift.io/display-name: Timegate Tomcat 8 with SessionClustering, Scouter (no https)
+    openshift.io/provider-display-name: Red Hat, Inc.
+    samples.operator.openshift.io/version: 4.12.15
+    tags: tomcat,tomcat8,java,jboss
+    template.openshift.io/documentation-url: https://access.redhat.com/documentation/en/red-hat-jboss-web-server/
+    template.openshift.io/long-description: This template defines resources needed
+      to develop Red Hat JBoss Web Server 3.1 Apache Tomcat 8 based application, including
+      a build configuration, and an application deployment configuration.
+    template.openshift.io/support-url: https://access.redhat.com
+    version: "1.4"
+  name: timegate-tomcat8-session-clutering-with-scouter
+  namespace: openshift
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The web server's http port.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: ${APPLICATION_NAME}-scouter-configmap
+  immutable: false
+  data:
+    scouter.conf: >
+      ### scouter java agent configuration sample
+      net_collector_ip=scouter-server.scouter-apm.svc.cluster.local
+      net_collector_udp_port=6100
+      net_collector_tcp_port=6100
+      hook_method_patterns=sample.mybiz.*Biz.*,sample.service.*Service.*
+      trace_http_client_ip_header_key=X-Forwarded-For
+      profile_spring_controller_method_parameter_enabled=false
+      hook_exception_class_patterns=my.exception.TypedException
+      profile_fullstack_hooked_exception_enabled=true
+      hook_exception_handler_method_patterns=my.AbstractAPIController.fallbackHandler,my.ApiExceptionLoggingFilter.handleNotFoundErrorResponse
+      hook_exception_hanlder_exclude_class_patterns=exception.BizException
+      counter_interaction_enabled=true
+- apiVersion: route.openshift.io/v1
+  id: ${APPLICATION_NAME}-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    host: ${HOSTNAME_HTTP}
+    to:
+      name: ${APPLICATION_NAME}
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        - name: ARTIFACT_DIR
+          value: ${ARTIFACT_DIR}
+        forcePull: true
+        from:
+          kind: ImageStreamTag
+          name: tomcat-sessioncluster:${BASE_IMAGE_VERSION}
+          namespace: ${IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+      type: GitHub
+    - generic:
+        secret: ${GENERIC_WEBHOOK_SECRET}
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ${APPLICATION_NAME}
+          deploymentConfig: ${APPLICATION_NAME}
+        name: ${APPLICATION_NAME}
+      spec:
+        volumes:
+        - name: scouter-conf
+          configMap:
+            name: ${APPLICATION_NAME}-scouter-configmap
+            defaultMode: 420
+        - name: scouter
+          emptyDir: {}
+        initContainers:
+        - name: init-agent
+          image: registry.ocp4.example.io:5000/scouter/scouter-agent:${SCOUTER_VERSION}
+          command:
+            - /bin/bash
+            - '-c'
+            - cp -r scouter/agent.java /scouter
+          volumeMounts:
+          - name: scouter
+            mountPath: /scouter
+
+        containers:
+        - env:
+          - name: JWS_ADMIN_USERNAME
+            value: ${JWS_ADMIN_USERNAME}
+          - name: JWS_ADMIN_PASSWORD
+            value: ${JWS_ADMIN_PASSWORD}
+          - name: JAVA_MAX_MEM_RATIO
+          - name: SCOUTER_AGENT_DIR
+            value: /scouter/agent.java
+          - name: JAVA_OPTS
+            value: >-
+              -javaagent:${SCOUTER_AGENT_DIR}/scouter.agent.jar
+              -Dscouter.config=${SCOUTER_AGENT_DIR}/conf/scouter.conf
+              -Dobj_name=${APPLICATION_NAME}
+          image: ${APPLICATION_NAME}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: scouter
+              mountPath: /scouter
+            - name: scouter-conf
+              mountPath: /scouter/agent.java/conf/scouter.conf
+              subPath: scouter.conf
+          name: ${APPLICATION_NAME}
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - curl --noproxy '*' -s -u ${JWS_ADMIN_USERNAME}:${JWS_ADMIN_PASSWORD}
+                'http://localhost:8080/manager/jmxproxy/?get=Catalina%3Atype%3DServer&att=stateName'
+                |grep -iq 'stateName *= *STARTED'
+        terminationGracePeriodSeconds: 60
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPLICATION_NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      type: ImageChange
+    - type: ConfigChange
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: APPLICATION_NAME
+  required: true
+- description: Version of Scouter.
+  displayName: Scouter Version
+  name: SCOUTER_VERSION
+  required: true
+  value: "1.0"
+- description: Version for application.
+  displayName: BASE Image Version
+  name: BASE_IMAGE_VERSION
+  required: true
+  value: "1.0"
+- description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: <application-name>-<project>.<default-domain-suffix>'
+  displayName: Custom http Route Hostname
+  name: HOSTNAME_HTTP
+- description: Git source URI for application
+  displayName: Git Repository URL
+  name: SOURCE_REPOSITORY_URL
+  required: true
+- description: Git branch/tag reference
+  displayName: Git Reference
+  name: SOURCE_REPOSITORY_REF
+  value: main
+- description: Path within Git project to build; empty for root project directory.
+  displayName: Context Directory
+  name: CONTEXT_DIR
+  value: "/"
+- description: JWS Admin User
+  displayName: JWS Admin Username
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: JWS_ADMIN_USERNAME
+  required: true
+- description: JWS Admin Password
+  displayName: JWS Admin Password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: JWS_ADMIN_PASSWORD
+  required: true
+- description: GitHub trigger secret
+  displayName: Github Webhook Secret
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
+  required: true
+- description: Generic build trigger secret
+  displayName: Generic Webhook Secret
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: GENERIC_WEBHOOK_SECRET
+  required: true
+- description: Namespace in which the ImageStreams for Red Hat Middleware images are
+    installed. These ImageStreams are normally installed in the openshift namespace.
+    You should only need to modify this if you've installed the ImageStreams in a
+    different namespace/project.
+  displayName: ImageStream Namespace
+  name: IMAGE_STREAM_NAMESPACE
+  required: true
+  value: openshift
+- description: Maven mirror to use for S2I builds
+  displayName: Maven mirror URL
+  name: MAVEN_MIRROR_URL
+- description: List of directories from which archives will be copied into the deployment
+    folder. If unspecified, all archives in /target will be copied.
+  name: ARTIFACT_DIR

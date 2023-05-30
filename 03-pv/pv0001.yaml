@@ -8,7 +8,7 @@ spec:
   accessModes:
   - ReadWriteOnce
   nfs: 
-    path: /PV/pv0001
-    server: 10.131.2.10
+    path: /home/PV/pv0001
+    server: 10.131.1.10
   persistentVolumeReclaimPolicy: Retain 
 

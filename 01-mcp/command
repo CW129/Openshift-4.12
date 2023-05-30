@@ -1,0 +1,2 @@
+oc patch ingresscontroller.operator.openshift.io default -n openshift-ingress-operator --type=merge --patch='{"spec":{"nodePlacement": {"nodeSelector": {"matchLabels": {"node-role.kubernetes.io/router": ""}}}}}'
+
