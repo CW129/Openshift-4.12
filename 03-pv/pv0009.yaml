@@ -4,11 +4,11 @@ metadata:
   name: pv0009
 spec:
   capacity:
-    storage: 20Gi 
+    storage: 1Gi 
   accessModes:
   - ReadWriteOnce
   nfs: 
-    path: /PV/pv0009
-    server: 10.131.2.10
+    path: /home/PV/pv0009
+    server: 10.131.1.10
   persistentVolumeReclaimPolicy: Retain 
 

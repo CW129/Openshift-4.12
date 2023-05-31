@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: imageregistry
+  namespace: openshift-image-registry 
+  annotations:
+    imageregistry.openshift.io: "true"
+spec:
+  accessModes:
+  - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100G
+  selector:
+    matchLabels:
+      volume-type: registry

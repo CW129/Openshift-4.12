@@ -96,3 +96,7 @@ ssh-add ~/.ssh/id_rsa
   echo "  - registry.ocp4.example.io:5000/ocp4/openshift4" >> install-config.yaml
   echo "  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev" >> install-config.yaml
 
+
+### IF X509 Certificate Issue alert ###
+oc rsh -n openshift-authentication <authentication_pod_name> cat /run/secrets/kubernetes.io/serviceaccount/ca.crt > ~/ingress-ca.crt
+cp ingress-ca.crt /etc/pki/ca-trust/source/anchors/
